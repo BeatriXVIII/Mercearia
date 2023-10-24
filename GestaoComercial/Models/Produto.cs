@@ -11,6 +11,6 @@ namespace Models
         public int Id { get; set; }
         public string Nome { get; set; }
         public double Estoque { get; set; }
-        public double MyProperty { get; set; }
+        public double Preco { get; set; }
     }
 }

@@ -3,9 +3,9 @@ using System.Data.SqlClient;
 
 namespace DAL
 {
-    public class ProdutoDAL
+    public class ClienteDAL
     {
-        public void Inserir(Produto _produto)
+        public void Inserir(Cliente _cliente)
         {
             SqlConnection cn = new SqlConnection(Constantes.StringDeConexao);
 
@@ -14,13 +14,12 @@ namespace DAL
                 SqlCommand cmd = cn.CreateCommand();
 
 
-                cmd.CommandText = "INSERT INTO Produto(Nome,Preco,Estoque) VALUES(@Nome, @Preco, @Estoque)";
+                cmd.CommandText = "INSERT INTO Cliente(Nome, Fone) VALUES(@Nome, @Fone)";
 
                 cmd.CommandType = System.Data.CommandType.Text;
 
-                cmd.Parameters.AddWithValue("@Nome", _produto.Nome);
-                cmd.Parameters.AddWithValue("@Preco", _produto.Preco);
-                cmd.Parameters.AddWithValue("@Estoque", _produto.Estoque);
+                cmd.Parameters.AddWithValue("@Nome", _cliente.Nome);
+                cmd.Parameters.AddWithValue("@Telefone", _cliente.Telefone);
 
 
                 cn.Open();
@@ -29,15 +28,14 @@ namespace DAL
             catch (Exception ex)
             {
 
-                throw new Exception("Ocorreu um erro ao tentar inserir o produto no banco de dados.", ex);
+                throw new Exception("Ocorreu um erro ao tentar inserir o cliente no banco de dados.", ex);
             }
             finally
             {
                 cn.Close();
             }
-
         }
-        public void Alterar(Produto _produto)
+        public void Alterar(Cliente _cliente)
         {
             SqlConnection cn = new SqlConnection(Constantes.StringDeConexao);
 
@@ -46,14 +44,13 @@ namespace DAL
                 SqlCommand cmd = cn.CreateCommand();
 
 
-                cmd.CommandText = "UPDATE Produto SET(Nome = @Nome, Preco = @Preco, Estoque = @Estoque) WHERE Id = @Id";
+                cmd.CommandText = "UPDATE Cliente SET(Nome = @Nome, Fone = @Fone) WHERE Id = @Id";
 
                 cmd.CommandType = System.Data.CommandType.Text;
 
-                cmd.Parameters.AddWithValue("@Id", _produto.Id);
-                cmd.Parameters.AddWithValue("@Nome", _produto.Nome);
-                cmd.Parameters.AddWithValue("@Preco", _produto.Preco);
-                cmd.Parameters.AddWithValue("@Estoque", _produto.Estoque);
+                cmd.Parameters.AddWithValue("@Id", _cliente.Id);
+                cmd.Parameters.AddWithValue("@Nome", _cliente.Nome);
+                cmd.Parameters.AddWithValue("@Telefone", _cliente.Telefone);
 
 
                 cn.Open();
@@ -62,13 +59,12 @@ namespace DAL
             catch (Exception ex)
             {
 
-                throw new Exception("Ocorreu um erro ao tentar atualizar o produto no banco de dados.", ex);
+                throw new Exception("Ocorreu um erro ao tentar atualizar o cliente no banco de dados.", ex);
             }
             finally
             {
                 cn.Close();
             }
-
         }
         public void Excluir(int _id)
         {
@@ -78,7 +74,7 @@ namespace DAL
             {
                 SqlCommand cmd = cn.CreateCommand();
 
-                cmd.CommandText = "DELETE FROM Produto WHERE Id = @Id";
+                cmd.CommandText = "DELETE FROM Cliente WHERE Id = @Id";
 
                 cmd.CommandType = System.Data.CommandType.Text;
 
@@ -89,18 +85,17 @@ namespace DAL
             }
             catch (Exception ex)
             {
-                throw new Exception("Ocorreu um erro ao tentar deletar o produto no banco de dados.", ex);
+                throw new Exception("Ocorreu um erro ao tentar deletar o cliente no banco de dados.", ex);
             }
             finally
             {
                 cn.Close();
             }
-
         }
-        public List<Produto> BuscarTodos()
+        public List<Cliente> BuscarTodos()
         {
-            List<Produto> produtoList = new List<Produto>();
-            Produto produto;
+            List<Cliente> clienteList = new List<Cliente>();
+            Cliente cliente;
 
             SqlConnection cn = new SqlConnection(Constantes.StringDeConexao);
 
@@ -109,7 +104,7 @@ namespace DAL
                 SqlCommand cmd = cn.CreateCommand();
 
 
-                cmd.CommandText = " SELECT Id, Nome, Preco, Estoque FROM Produto";
+                cmd.CommandText = " SELECT Id, Nome, Fone FROM Cliente";
 
                 cmd.CommandType = System.Data.CommandType.Text;
 
@@ -119,29 +114,28 @@ namespace DAL
                 {
                     while (rd.Read())
                     {
-                        produto = new Produto();
-                        produto.Id = (int)rd["Id"];
-                        produto.Nome = rd["Nome"].ToString();
-                        produto.Preco = (double)rd["Preco"];
-                        produto.Estoque = (double)rd["Estoque"];
-                        produtoList.Add(produto);
+                        cliente = new Cliente();
+                        cliente.Id = (int)rd["Id"];
+                        cliente.Nome = rd["Nome"].ToString();
+                        cliente.Telefone = rd["Telefone"].ToString();
+                        clienteList.Add(cliente);
                     }
                 }
-                return produtoList;
+                return clienteList;
 
             }
             catch (Exception ex)
             {
-                throw new Exception("Ocorreu um erro ao tentar buscar o produto no banco de dados.", ex);
+                throw new Exception("Ocorreu um erro ao tentar buscar o cliente no banco de dados.", ex);
             }
             finally
             {
                 cn.Close();
             }
         }
-        public Produto BuscarPorId(int _id)
+        public Cliente BuscarPorId(int _id)
         {
-            Produto produto;
+            Cliente cliente;
 
             SqlConnection cn = new SqlConnection(Constantes.StringDeConexao);
 
@@ -150,7 +144,7 @@ namespace DAL
                 SqlCommand cmd = cn.CreateCommand();
 
 
-                cmd.CommandText = " SELECT Id, Nome, Preco, Estoque FROM Produto WHERE Id  = @Id";
+                cmd.CommandText = " SELECT Id, Nome, Fone FROM Cliente WHERE Id  = @Id";
 
                 cmd.CommandType = System.Data.CommandType.Text;
 
@@ -160,20 +154,20 @@ namespace DAL
 
                 using (SqlDataReader rd = cmd.ExecuteReader())
                 {
-                    produto = new Produto();
+                    cliente = new Cliente();
                     if (rd.Read())
                     {
-                        produto.Id = (int)rd["Id"];
-                        produto.Nome = rd["Nome"].ToString();
-                        produto.Preco = (double)rd["Preco"];
-                        produto.Estoque = (double)rd["Estoque"];
+                        cliente.Id = (int)rd["Id"];
+                        cliente.Nome = rd["Nome"].ToString();
+                        cliente.Telefone = rd["Fone"].ToString();
+
                     }
                 }
-                return produto;
+                return cliente;
             }
             catch (Exception ex)
             {
-                throw new Exception("Ocorreu um erro ao tentar buscar o produto no banco de dados.", ex);
+                throw new Exception("Ocorreu um erro ao tentar buscar o cliente no banco de dados.", ex);
             }
             finally
             {
