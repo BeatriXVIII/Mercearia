@@ -7,7 +7,7 @@ namespace DAL
     {
         public void Inserir(Produto _produto)
         {
-            SqlConnection cn = new SqlConnection(Constantes.StringDeConexao);
+            SqlConnection cn = new SqlConnection(Conexao.StringDeConexao);
 
             try
             {
@@ -39,7 +39,7 @@ namespace DAL
         }
         public void Alterar(Produto _produto)
         {
-            SqlConnection cn = new SqlConnection(Constantes.StringDeConexao);
+            SqlConnection cn = new SqlConnection(Conexao.StringDeConexao);
 
             try
             {
@@ -72,7 +72,7 @@ namespace DAL
         }
         public void Excluir(int _id)
         {
-            SqlConnection cn = new SqlConnection(Constantes.StringDeConexao);
+            SqlConnection cn = new SqlConnection(Conexao.StringDeConexao);
 
             try
             {
@@ -102,14 +102,14 @@ namespace DAL
             List<Produto> produtoList = new List<Produto>();
             Produto produto;
 
-            SqlConnection cn = new SqlConnection(Constantes.StringDeConexao);
+            SqlConnection cn = new SqlConnection(Conexao.StringDeConexao);
 
             try
             {
                 SqlCommand cmd = cn.CreateCommand();
 
 
-                cmd.CommandText = " SELECT Id, Nome, Preco, Estoque FROM Produto";
+                cmd.CommandText = " SELECT Id, Nome, Preco, Estoque, CodigoBarra FROM Produto ";
 
                 cmd.CommandType = System.Data.CommandType.Text;
 
@@ -119,11 +119,7 @@ namespace DAL
                 {
                     while (rd.Read())
                     {
-                        produto = new Produto();
-                        produto.Id = (int)rd["Id"];
-                        produto.Nome = rd["Nome"].ToString();
-                        produto.Preco = (double)rd["Preco"];
-                        produto.Estoque = (double)rd["Estoque"];
+                        produto = PreencherObjeto(rd);
                         produtoList.Add(produto);
                     }
                 }
@@ -143,14 +139,14 @@ namespace DAL
         {
             Produto produto;
 
-            SqlConnection cn = new SqlConnection(Constantes.StringDeConexao);
+            SqlConnection cn = new SqlConnection(Conexao.StringDeConexao);
 
             try
             {
                 SqlCommand cmd = cn.CreateCommand();
 
 
-                cmd.CommandText = " SELECT Id, Nome, Preco, Estoque FROM Produto WHERE Id  = @Id";
+                cmd.CommandText = " SELECT Id, Nome, Preco, Estoque, CodigoBarra FROM Produto  WHERE Id  = @Id";
 
                 cmd.CommandType = System.Data.CommandType.Text;
 
@@ -163,10 +159,7 @@ namespace DAL
                     produto = new Produto();
                     if (rd.Read())
                     {
-                        produto.Id = (int)rd["Id"];
-                        produto.Nome = rd["Nome"].ToString();
-                        produto.Preco = (double)rd["Preco"];
-                        produto.Estoque = (double)rd["Estoque"];
+                        produto = PreencherObjeto(rd);
                     }
                 }
                 return produto;
@@ -179,6 +172,92 @@ namespace DAL
             {
                 cn.Close();
             }
+        }
+        public Produto BuscarPorNome(string nomeProduto)
+        {
+            Produto produto;
+
+            SqlConnection cn = new SqlConnection(Conexao.StringDeConexao);
+
+            try
+            {
+                SqlCommand cmd = cn.CreateCommand();
+
+
+                cmd.CommandText = " SELECT Id, Nome, Preco, Estoque, CodigoBarra FROM Produto WHERE NomeUsuario  = @NomeUsuario";
+
+                cmd.CommandType = System.Data.CommandType.Text;
+
+                cmd.Parameters.AddWithValue("@NomeCliente", nomeProduto);
+
+                cn.Open();
+
+                using (SqlDataReader rd = cmd.ExecuteReader())
+                {
+                    produto = new Produto();
+                    if (rd.Read())
+                    {
+                        produto = PreencherObjeto(rd);
+                    }
+                }
+                return produto;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Ocorreu um erro ao tentar buscar o cliente pelo nome no banco de dados.", ex);
+            }
+            finally
+            {
+                cn.Close();
+            }
+        }
+        public Produto BuscarPorCodigoBarra(string codigoBarra)
+        {
+            Produto produto;
+
+            SqlConnection cn = new SqlConnection(Conexao.StringDeConexao);
+
+            try
+            {
+                SqlCommand cmd = cn.CreateCommand();
+
+
+                cmd.CommandText = " SELECT Id, Nome, Preco, Estoque, CodigoBarra FROM Produto WHERE NomeUsuario  = @NomeUsuario";
+
+                cmd.CommandType = System.Data.CommandType.Text;
+
+                cmd.Parameters.AddWithValue("@CodigoBarra", codigoBarra);
+
+                cn.Open();
+
+                using (SqlDataReader rd = cmd.ExecuteReader())
+                {
+                    produto = new Produto();
+                    if (rd.Read())
+                    {
+                        produto = PreencherObjeto(rd);
+                    }
+                }
+                return produto;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Ocorreu um erro ao tentar buscar o cliente pelo Código de Barra no banco de dados.", ex);
+            }
+            finally
+            {
+                cn.Close();
+            }
+        }
+        private Produto PreencherObjeto(SqlDataReader rd)
+        {
+            Produto produto = new Produto();
+            produto.Id = (int)rd["Id"];
+            produto.Nome = rd["Nome"].ToString();
+            produto.Preco = Convert.ToDouble(rd["Preco"]);
+            produto.Estoque = Convert.ToDouble(rd["Estoque"]);
+            produto.CodigoBarra = rd["CodigoBarra"].ToString();
+            return produto;
         }
     }
 }

@@ -7,7 +7,7 @@ namespace DAL
     {
         public void Inserir(Cliente _cliente)
         {
-            SqlConnection cn = new SqlConnection(Constantes.StringDeConexao);
+            SqlConnection cn = new SqlConnection(Conexao.StringDeConexao);
 
             try
             {
@@ -37,7 +37,7 @@ namespace DAL
         }
         public void Alterar(Cliente _cliente)
         {
-            SqlConnection cn = new SqlConnection(Constantes.StringDeConexao);
+            SqlConnection cn = new SqlConnection(Conexao.StringDeConexao);
 
             try
             {
@@ -68,7 +68,7 @@ namespace DAL
         }
         public void Excluir(int _id)
         {
-            SqlConnection cn = new SqlConnection(Constantes.StringDeConexao);
+            SqlConnection cn = new SqlConnection(Conexao.StringDeConexao);
 
             try
             {
@@ -97,7 +97,7 @@ namespace DAL
             List<Cliente> clienteList = new List<Cliente>();
             Cliente cliente;
 
-            SqlConnection cn = new SqlConnection(Constantes.StringDeConexao);
+            SqlConnection cn = new SqlConnection(Conexao.StringDeConexao);
 
             try
             {
@@ -137,7 +137,7 @@ namespace DAL
         {
             Cliente cliente;
 
-            SqlConnection cn = new SqlConnection(Constantes.StringDeConexao);
+            SqlConnection cn = new SqlConnection(Conexao.StringDeConexao);
 
             try
             {
@@ -173,6 +173,56 @@ namespace DAL
             {
                 cn.Close();
             }
+        }
+        public Cliente BuscarPorNome(string nomeCliente)
+        {
+            Cliente cliente;
+
+            SqlConnection cn = new SqlConnection(Conexao.StringDeConexao);
+
+            try
+            {
+                SqlCommand cmd = cn.CreateCommand();
+
+
+                cmd.CommandText = " SELECT Id, Nome, NomeUsuario, Senha, Ativo FROM Usuario WHERE NomeUsuario  = @NomeUsuario";
+
+                cmd.CommandType = System.Data.CommandType.Text;
+
+                cmd.Parameters.AddWithValue("@NomeCliente", nomeCliente);
+
+                cn.Open();
+
+                using (SqlDataReader rd = cmd.ExecuteReader())
+                {
+                    cliente = new Cliente();
+                    if (rd.Read())
+                    {
+                        cliente = PreencherObjeto(rd);
+                    }
+                }
+                return cliente;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Ocorreu um erro ao tentar buscar o cliente pelo nome no banco de dados.", ex);
+            }
+            finally
+            {
+                cn.Close();
+            }
+        }
+
+        private Cliente PreencherObjeto(SqlDataReader rd)
+        {
+            throw new NotImplementedException();
+        }
+
+        private static void NewMethod(Cliente cliente, SqlDataReader rd)
+        {
+            cliente.Id = (int)rd["Id"];
+            cliente.Nome = rd["Nome"].ToString();
+            cliente.Telefone = rd["Telefone"].ToString();
         }
     }
 }
